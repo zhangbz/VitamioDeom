@@ -8,11 +8,11 @@ import android.widget.Toast;
 import cn.bmob.v3.Bmob;
 
 /**
- * »ùÀà
+ * ï¿½ï¿½ï¿½ï¿½
  * @ClassName: BaseActivity
  * @Description: TODO
  * @author smile
- * @date 2014-5-20 ÉÏÎç9:55:34
+ * @date 2014-5-20 ï¿½ï¿½ï¿½ï¿½9:55:34
  */
 public class BaseActivity extends Activity {
 
@@ -22,8 +22,9 @@ public class BaseActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
-		 // ³õÊ¼»¯ Bmob SDK
-        // Ê¹ÓÃÊ±Çë½«µÚ¶ş¸ö²ÎÊıApplication IDÌæ»»³ÉÄãÔÚBmob·şÎñÆ÷¶Ë´´½¨µÄApplication ID
+		super.onCreate(savedInstanceState);
+		// åˆå§‹åŒ– Bmob SDK
+		// ä½¿ç”¨æ—¶è¯·å°†ç¬¬äºŒä¸ªå‚æ•°Application IDæ›¿æ¢æˆä½ åœ¨BmobæœåŠ¡å™¨ç«¯åˆ›å»ºçš„Application ID
 		Bmob.initialize(this, Bmob_AppId);
 	}
 

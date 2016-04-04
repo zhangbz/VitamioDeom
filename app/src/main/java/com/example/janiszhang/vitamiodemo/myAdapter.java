@@ -12,12 +12,12 @@ import java.util.List;
 /**
  * Created by janiszhang on 2016/4/3.
  */
-public class myAdapter extends ArrayAdapter{
+public class MyAdapter<V> extends ArrayAdapter<VideoData>{
 
 //    private int resourceId;
 
 
-    public myAdapter(Context context,int textViewResourceId,List<VideoData> dataList) {
+    public MyAdapter(Context context, int textViewResourceId, List<VideoData> dataList) {
         super(context, textViewResourceId, dataList);
 //        resourceId = textViewResourceId;
     }
@@ -36,7 +36,7 @@ public class myAdapter extends ArrayAdapter{
         }
 
         mViewHolder.videoName.setText(item.getVideoName());
-        return super.getView(position, convertView, parent);
+        return convertView;//super.getView(position, convertView, parent);
     }
 
 

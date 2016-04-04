@@ -5,8 +5,11 @@
               android:layout_height="match_parent">
 
     <TextView
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginBottom="10dp"
         android:id="@+id/vido_name"
         android:textSize="20dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="50dp"/>
 </LinearLayout>

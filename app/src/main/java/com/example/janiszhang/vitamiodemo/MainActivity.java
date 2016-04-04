@@ -2,6 +2,7 @@ package com.example.janiszhang.vitamiodemo;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.media.AudioManager;
 import android.net.Uri;
@@ -17,10 +18,26 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 
+import org.json.JSONObject;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.BmobRealTimeData;
+import cn.bmob.v3.BmobUser;
+import cn.bmob.v3.datatype.BmobPointer;
+import cn.bmob.v3.listener.FindListener;
+import cn.bmob.v3.listener.SaveListener;
+import cn.bmob.v3.listener.ValueEventListener;
 import io.vov.vitamio.LibsChecker;
 import io.vov.vitamio.MediaPlayer;
 import io.vov.vitamio.widget.MediaController;
@@ -71,6 +88,13 @@ public class MainActivity extends BaseActivity {
             mVolumeBrightnessLayout.setVisibility(View.GONE);
         }
     };
+    private EditText mComment;
+    private Button mSubmit;
+    private String mId;
+    private ListView mCommentList;
+    private CommentListAdapter mCommentListAdapter;
+    private BmobRealTimeData mRtd = new BmobRealTimeData();;
+    private String mVideoName;
 
     @Override
     public void onCreate(Bundle icicle) {
@@ -85,7 +109,12 @@ public class MainActivity extends BaseActivity {
 //        mOperationPercent = (ImageView) findViewById(R.id.operation_percent);
 
 //        mVideoView.setVideoPath(path);
-        mVideoView.setVideoURI(Uri.parse("http://7xsknj.com1.z0.glb.clouddn.com/test2.mp4"));
+        Intent intent = getIntent();
+        Bundle bundle = intent.getExtras();
+        mId = bundle.getString("id");
+        String videoUrl = bundle.getString("videoUrl");
+        mVideoName = bundle.getString("videoName");
+        mVideoView.setVideoURI(Uri.parse(videoUrl));
 
 //        mVideoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
 //            @Override
@@ -104,7 +133,122 @@ public class MainActivity extends BaseActivity {
         mVideoView.setVideoQuality(MediaPlayer.VIDEOQUALITY_HIGH);
         mVideoView.requestFocus();
 
+        final ArrayList<comment> commentListData = new ArrayList<comment>();
+
+        BmobQuery<comment> query = new BmobQuery<>();
+        VideoData videoData = new VideoData();
+        videoData.setObjectId(mId);
+        query.addWhereEqualTo("video", new BmobPointer(videoData));
+        query.include("author,createdAt");
+//        query.order("-createdAt");
+        query.findObjects(this, new FindListener<comment>() {
+            @Override
+            public void onSuccess(List<comment> list) {
+                ShowToast("查询成功：共" + list.size() + "条数据。");
+                for (comment comment : list) {
+                    commentListData.add(comment);
+                }
+            }
+
+            @Override
+            public void onError(int i, String s) {
+                ShowToast("查询失败：" + s);
+            }
+        });
+
+        mCommentList = (ListView) findViewById(R.id.comment_list);
+        mCommentListAdapter = new CommentListAdapter(this, R.layout.comment_list_item, commentListData);
+        mCommentList.setAdapter(mCommentListAdapter);
+//        mCommentList.setSelection(commentListData.size() - 1);
+
+
+        mComment = (EditText) findViewById(R.id.comment);
+        mSubmit = (Button) findViewById(R.id.submit);
+        mSubmit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                                BmobUser user = BmobUser.getCurrentUser(MainActivity.this);
+                    VideoData videoData = new VideoData();
+                    videoData.setObjectId(mId);
+                    comment comment = new comment();
+                    comment.setContent(mComment.getText().toString());
+                    comment.setAuthor(user);
+                    comment.setVideo(videoData);
+                    comment.setAuthorName(user.getUsername());
+                    comment.setVideoName(mVideoName);
+                    comment.save(MainActivity.this, new SaveListener() {
+                        @Override
+                        public void onSuccess() {
+                            ShowToast("评论成功");
+                        }
+
+                    @Override
+                    public void onFailure(int i, String s) {
+                        ShowToast("评论失败:" + s);
+                    }
+                });
+                mComment.setText("");
+            }
+        });
 //        mGestureDetector = new GestureDetector(this, new MyGestureListener());
+
+
+        //数据监听
+        mRtd.start(this, new ValueEventListener() {
+            @Override
+            public void onConnectCompleted() {
+                Log.i("zhangbz", "连接成功");
+                if (mRtd.isConnected()) {//发现如果是成员变量就不需要是final的
+                    mRtd.subTableUpdate("comment");
+                }
+            }
+
+            @Override
+            public void onDataChange(JSONObject jsonObject) {
+                ShowToast("数据发生变化了");
+                Log.i("zhangbz", "数据发生变化了");
+                if(BmobRealTimeData.ACTION_UPDATETABLE.equals(jsonObject.optString("action"))) {
+                    JSONObject data = jsonObject.optJSONObject("data");
+//                    Log.i("zhangbz", "content: " + data.optString("content") + "author: " + data.optString("author") +"jsonObject: " +data );//直接打印data
+                    if(data.optString("videoName").equals(mVideoName)) {
+                        commentListData.add(new comment(data.optString("content"), data.optString("authorName")));//(String content, BmobUser author, VideoData video, String authorName, String videoName)
+                        mCommentListAdapter.notifyDataSetChanged();
+//                        mCommentList.setSelection(commentListData.size() - 1);
+//                        commentListData.clear();
+//                        BmobQuery<comment> query = new BmobQuery<>();
+//                        VideoData videoData = new VideoData();
+//                        videoData.setObjectId(mId);
+//                        query.addWhereEqualTo("video", new BmobPointer(videoData));
+//                        query.include("author,createdAt");
+//                        query.order("-createdAt");
+//                        query.findObjects(MainActivity.this, new FindListener<comment>() {
+//                            @Override
+//                            public void onSuccess(List<comment> list) {
+//                                ShowToast("查询成功：共" + list.size() + "条数据。");
+//                                for (comment comment : list) {
+//                                    commentListData.add(comment);
+//                                }
+//                            }
+//
+//                            @Override
+//                            public void onError(int i, String s) {
+//                                ShowToast("查询失败：" + s);
+//                            }
+//                        });
+//
+// //                       mCommentListAdapter.notifyDataSetChanged();
+//   //                     mCommentList.invalidate();
+//
+//                        mCommentListAdapter = new CommentListAdapter(MainActivity.this, R.layout.comment_list_item, commentListData);
+//                        mCommentList.setAdapter(mCommentListAdapter);
+
+                    }
+                }
+            }
+        });
+
+
+
     }
 
 //    @Override
