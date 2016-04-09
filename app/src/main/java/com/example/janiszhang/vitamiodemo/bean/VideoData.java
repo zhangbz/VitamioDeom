@@ -1,4 +1,4 @@
-package com.example.janiszhang.vitamiodemo;
+package com.example.janiszhang.vitamiodemo.bean;
 
 import cn.bmob.v3.BmobObject;
 import cn.bmob.v3.datatype.BmobRelation;
@@ -11,6 +11,25 @@ public class VideoData extends BmobObject {//不继承居然也能使用,但是�
     private String videoName;
     private String videoUrl;
     private BmobRelation likes;
+    private Boolean status;
+    private String parent;
+
+
+    public Boolean getIsPlaying() {
+        return status;
+    }
+
+    public void setIsPlaying(Boolean isPlaying) {
+        this.status = isPlaying;
+    }
+
+    public String getParent() {
+        return parent;
+    }
+
+    public void setParent(String parent) {
+        parent = parent;
+    }
 
     public BmobRelation getLikes() {
         return likes;

@@ -2,7 +2,7 @@
 <project version="4">
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$/app/build.gradle" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/janiszhang/vitamiodemo/BaseActivity.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/janiszhang/vitamiodemo/activity/BaseActivity.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/video_brightness_bg.png" charset="GBK" />
     <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/video_num_bg.png" charset="GBK" />
     <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/video_num_front.png" charset="GBK" />

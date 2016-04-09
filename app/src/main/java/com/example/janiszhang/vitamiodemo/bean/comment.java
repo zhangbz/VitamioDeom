@@ -1,4 +1,4 @@
-package com.example.janiszhang.vitamiodemo;
+package com.example.janiszhang.vitamiodemo.bean;
 
 import cn.bmob.v3.BmobObject;
 import cn.bmob.v3.BmobUser;
