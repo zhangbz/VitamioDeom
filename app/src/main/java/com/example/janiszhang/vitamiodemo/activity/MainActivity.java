@@ -8,7 +8,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RatingBar;
+import android.widget.RelativeLayout;
 
 import com.example.janiszhang.vitamiodemo.adapter.CommentListAdapter;
 import com.example.janiszhang.vitamiodemo.R;
@@ -54,6 +57,14 @@ public class MainActivity extends BaseActivity {
     private BmobRealTimeData mRtd = new BmobRealTimeData();
     ;
     private String mVideoName;
+    private LinearLayout mChooseLl;
+    private RelativeLayout mCommentRl;
+    private RelativeLayout mScoreRl;
+    private Button mCommentBtn;
+    private Button mScoreBtn;
+    private RatingBar mRatingBar;
+    private Button mScoreSubmit;
+    private boolean flag = false;
 
     @Override
     public void onCreate(Bundle icicle) {
@@ -63,11 +74,13 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.video_layout);
         FrameLayout llvideo = (FrameLayout) findViewById(R.id.ll);
         mVideoView = (VideoView) findViewById(R.id.surface_view);
+
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
         mId = bundle.getString("id");
         String videoUrl = bundle.getString("videoUrl");
         mVideoName = bundle.getString("videoName");
+
         mVideoView.setVideoURI(Uri.parse(videoUrl));
 
         mMediaController = new MediaController(this, true, llvideo);//        new MediaController(this);
@@ -103,7 +116,67 @@ public class MainActivity extends BaseActivity {
         mCommentListAdapter = new CommentListAdapter(this, R.layout.comment_list_item, commentListData);
         mCommentList.setAdapter(mCommentListAdapter);
 
-        mComment = (EditText) findViewById(R.id.comment);
+        mChooseLl = (LinearLayout) findViewById(R.id.ll_choose);
+        mCommentRl = (RelativeLayout) findViewById(R.id.rl_comment);
+        mScoreRl = (RelativeLayout) findViewById(R.id.rl_score);
+
+        mCommentBtn = (Button) findViewById(R.id.bt_comment);
+        mCommentBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mChooseLl.setVisibility(View.INVISIBLE);
+                mScoreRl.setVisibility(View.INVISIBLE);
+                mCommentRl.setVisibility(View.VISIBLE);
+                flag = true;
+            }
+        });
+
+        mScoreBtn = (Button) findViewById(R.id.bt_score);
+        mScoreBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mChooseLl.setVisibility(View.INVISIBLE);
+                mScoreRl.setVisibility(View.VISIBLE);
+                mCommentRl.setVisibility(View.INVISIBLE);
+                flag = true;
+            }
+        });
+
+        mRatingBar = (RatingBar) findViewById(R.id.ratingBar);
+        mRatingBar.setStepSize(1);
+        mScoreSubmit = (Button) findViewById(R.id.score_submit);
+        mScoreSubmit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                BmobUser user = BmobUser.getCurrentUser(MainActivity.this);
+                VideoData videoData = new VideoData();
+                videoData.setObjectId(mId);
+                comment comment = new comment();
+                comment.setContent("");
+                comment.setAuthor(user);
+                comment.setVideo(videoData);
+                comment.setAuthorName(user.getUsername());
+                comment.setVideoName(mVideoName);
+                comment.setType(2);
+                comment.setScore((int)mRatingBar.getRating());
+                comment.save(MainActivity.this, new SaveListener() {
+                    @Override
+                    public void onSuccess() {
+                        ShowToast("评分成功");
+                    }
+
+                    @Override
+                    public void onFailure(int i, String s) {
+                        ShowToast("评分失败:" + s);
+                    }
+                });
+//                mComment.setText("");
+//                mRatingBar.setRating(3);
+                resetBottom();
+            }
+        });
+
+        mComment = (EditText) findViewById(R.id.ed_comment);
         mSubmit = (Button) findViewById(R.id.submit);
         mSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -117,6 +190,8 @@ public class MainActivity extends BaseActivity {
                 comment.setVideo(videoData);
                 comment.setAuthorName(user.getUsername());
                 comment.setVideoName(mVideoName);
+                comment.setType(1);
+                comment.setScore(0);
                 comment.save(MainActivity.this, new SaveListener() {
                     @Override
                     public void onSuccess() {
@@ -129,6 +204,7 @@ public class MainActivity extends BaseActivity {
                     }
                 });
                 mComment.setText("");
+                resetBottom();
             }
         });
 
@@ -149,7 +225,7 @@ public class MainActivity extends BaseActivity {
                 if (BmobRealTimeData.ACTION_UPDATETABLE.equals(jsonObject.optString("action"))) {
                     JSONObject data = jsonObject.optJSONObject("data");
                     if (data.optString("videoName").equals(mVideoName)) {
-                        commentListData.add(new comment(data.optString("content"), data.optString("authorName")));//(String content, BmobUser author, VideoData video, String authorName, String videoName)
+                        commentListData.add(new comment(data.optString("content"), data.optString("authorName"), data.optInt("type"),data.optInt("score")));//(String content, BmobUser author, VideoData video, String authorName, String videoName)
                         mCommentListAdapter.notifyDataSetChanged();
                     }
                 }
@@ -158,4 +234,20 @@ public class MainActivity extends BaseActivity {
     }
 
 
+    private void resetBottom() {
+        mCommentRl.setVisibility(View.INVISIBLE);
+        mScoreRl.setVisibility(View.INVISIBLE);
+        mChooseLl.setVisibility(View.VISIBLE);
+        flag = false;
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        if(flag) {
+            resetBottom();
+        } else {
+            super.onBackPressed();
+        }
+    }
 }
