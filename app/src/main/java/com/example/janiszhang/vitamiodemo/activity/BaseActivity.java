@@ -15,6 +15,7 @@ import cn.bmob.v3.Bmob;
  */
 public class BaseActivity extends AppCompatActivity{
 
+	//Bmob Application ID
 	private String Bmob_AppId = "8ccd22955340ad082283bf59fa40aa0c";
 
 	@Override
@@ -27,8 +28,8 @@ public class BaseActivity extends AppCompatActivity{
 		Bmob.initialize(this, Bmob_AppId);
 	}
 
+	//封装Toast,写在BaseActivity中,所有继承BaseActivity的Activity都可以调用ShowToast()方法
 	Toast mToast;
-
 	public void ShowToast(String text) {
 		if (!TextUtils.isEmpty(text)) {
 			if (mToast == null) {

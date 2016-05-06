@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_comment"
+        android:icon="@drawable/list_slt_icn_language"
+        app:showAsAction="ifRoom|collapseActionView"
+        android:title="comments" />
+
+    <item
+        android:id="@+id/action_love"
+        app:showAsAction="ifRoom|collapseActionView"
+        android:title="收藏"/>
+    <!--android:icon="@drawable/note_btn_love_white"-->
+</menu>

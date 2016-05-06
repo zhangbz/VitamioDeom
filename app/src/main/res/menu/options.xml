@@ -12,8 +12,8 @@
         android:title="search" />
 
     <item
-        android:id="@+id/action_logout"
+        android:id="@+id/action_person_centor"
         app:showAsAction="never"
-        android:title="退出"/>
+        android:title="个人中心"/>
 
 </menu>

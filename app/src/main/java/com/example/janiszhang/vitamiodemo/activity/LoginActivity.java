@@ -26,11 +26,20 @@ public class LoginActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        mUserName = (EditText) findViewById(R.id.user_name);
-        mPassWord = (EditText) findViewById(R.id.pass_word);
-        mSignUp = (Button) findViewById(R.id.sign_up);
-        mLongin = (Button) findViewById(R.id.login);
+        FindViewById();
 
+        SetOnClickListener();
+
+        //如果用户已经登录过,且没有主动退出,则跳过登录注册过程,直接进入视频列表
+        BmobUser currentUser = BmobUser.getCurrentUser(this);
+        if(currentUser != null) {
+            Intent intent = new Intent(LoginActivity.this, VideoListActivity.class);
+            startActivity(intent);
+            finish();
+        }
+    }
+
+    private void SetOnClickListener() {
         mSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -76,12 +85,12 @@ public class LoginActivity extends BaseActivity {
                 });
             }
         });
+    }
 
-        BmobUser currentUser = BmobUser.getCurrentUser(this);
-        if(currentUser != null) {
-            Intent intent = new Intent(LoginActivity.this, VideoListActivity.class);
-            startActivity(intent);
-            finish();
-        }
+    private void FindViewById() {
+        mUserName = (EditText) findViewById(R.id.user_name);
+        mPassWord = (EditText) findViewById(R.id.pass_word);
+        mSignUp = (Button) findViewById(R.id.sign_up);
+        mLongin = (Button) findViewById(R.id.login);
     }
 }

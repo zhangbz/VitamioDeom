@@ -4,13 +4,6 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 
-    <TextView
-        android:layout_marginLeft="10dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/parent"
-        android:textSize="20dp"
-        android:text="parent"/>
     <LinearLayout
         android:layout_marginTop="10dp"
         android:layout_marginLeft="20dp"
@@ -36,7 +29,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/status"
+            android:id="@+id/parent"
             android:text="status"
             android:textSize="18dp"
             android:layout_alignParentRight="true"

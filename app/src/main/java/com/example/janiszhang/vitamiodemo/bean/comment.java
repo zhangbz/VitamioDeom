@@ -13,6 +13,7 @@ public class comment extends BmobObject{
     private VideoData video;
     private String authorName;
     private String videoName;
+    private int unit;
 
     private int type;//1:评论 2:评分
     private int score;
@@ -24,7 +25,7 @@ public class comment extends BmobObject{
         this.score = score;
     }
 
-    public comment(String content, BmobUser author, VideoData video, String authorName, String videoName, int type, int score) {
+    public comment(String content, BmobUser author, VideoData video, String authorName, String videoName, int type, int score,int unit) {
         this.content = content;
         this.author = author;
         this.video = video;
@@ -32,9 +33,10 @@ public class comment extends BmobObject{
         this.videoName = videoName;
         this.type = type;
         this.score = score;
+        this.unit = unit;
     }
 
-    public comment(String tableName, String content, BmobUser author, VideoData video, String authorName, String videoName, int type, int score) {
+    public comment(String tableName, String content, BmobUser author, VideoData video, String authorName, String videoName, int type, int score,int unit) {
         super(tableName);
         this.content = content;
         this.author = author;
@@ -43,12 +45,20 @@ public class comment extends BmobObject{
         this.videoName = videoName;
         this.type = type;
         this.score = score;
+        this.unit = unit;
     }
 
     public comment() {
 
     }
 
+    public int getUnit() {
+        return unit;
+    }
+
+    public void setUnit(int unit) {
+        this.unit = unit;
+    }
     public String getAuthorName() {
         return authorName;
     }

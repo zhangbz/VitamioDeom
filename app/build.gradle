@@ -25,6 +25,8 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.2.1'
     compile project(':vitamio')
 
+    compile 'com.github.lecho:hellocharts-library:1.5.8@aar'
+
     //以下SDK开发者请根据需要自行选择
     //bmob-sdk ：Bmob的android sdk包
     compile 'cn.bmob.android:bmob-sdk:3.4.5'
